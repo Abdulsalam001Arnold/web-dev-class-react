@@ -4,11 +4,13 @@ import { Header } from "../components/Header"
 import instance from "../api/instance"
 import { useState } from "react"
 import { ToastContainer, toast } from "react-toastify"
-import axios from "axios"
+import Loader from "../components/Loader"
+
 
 
 export default function Contact() {
     
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -16,7 +18,7 @@ export default function Contact() {
     })
 
     const handleChange = (e) => {
-        const {  name, value} = e.target
+        const { name, value} = e.target
         setFormData((prevData) => ({
             ...prevData,
             [name]: value
@@ -25,9 +27,9 @@ export default function Contact() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
+        setLoading(true)
         try{
-            const response = await axios.post('https://nodejs-class-pgxf.vercel.app/api/create-contact', formData)
+            const response = await instance.post('api/create-contact', formData)
             if(response?.status === 201) {
                 toast.success('Contact created successfully!')
                 setFormData({
@@ -41,15 +43,22 @@ export default function Contact() {
                 toast.error('Please fill all the fields correctly!')
             }
 
-            toast.error('Failed to create contact!')
         }catch(err){
             console.error(err)
+            toast.error('Failed to create contact!')
+        }finally{
+            setLoading(false)
         }
     }
     
 
     return(
         <div className="w-full flex flex-col items-center justify-center">
+
+        <ToastContainer
+            position="top-right"
+            autoClose={5000}
+        />
             <Header title='This is contact page!!!'/>
 
             <p>Welcome, contact us for more info!!!</p>
@@ -79,10 +88,10 @@ export default function Contact() {
                     placeholder="Please enter your phone number"
                 />
 
-                <input
-                    type="submit"
-                    value={"Submit"}
-                />
+                <button type="submit">
+                    {loading ? "Submitting" : "Submit"}
+                </button>
+                {loading && <Loader />}
             </form>
         </div>
     )

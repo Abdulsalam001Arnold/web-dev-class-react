@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { FaHome } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "../components/ThemeToggle";
+import useUserStore from "../store/useUserStore";
 
 export default function Home() {
   const reference = useRef();
   const [count, setCount] = useState(0);
 
   const [name, setName] = useState("");
+
+  const { user } = useUserStore()
 
   const handleChange = (e) => {
     return setName(e.target.value);
@@ -69,6 +72,11 @@ export default function Home() {
 <div className="mt-[3rem] mb-[2rem]">
       <ThemeToggle/>
 
+</div>
+
+<div className="mt-[5rem]">
+    <h1 className="text-xl">Hello {user.fullName}</h1>
+    <p>My email is: {user.email}</p>
 </div>
       </div>
     </div>
